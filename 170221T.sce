@@ -61,6 +61,27 @@ function [ filtered_genes, ignore_rows ] = ignore_genes(strand, verbose )
 
 endfunction
 
+function [remaining_seq] = get_remaining_seq(f_gp, f_gn)
+    pribnow_start = 30;  // Start position offset of pribnow Box (upstream positions upto 30)
+    pribnow_stop  = 5;   // Stop position offset of pribnow Box (upstream positions upto 5)
+    remaining_seq = []
+
+    for n_key=1000:length(f_gp)/2
+        remaining_seq   = [remaining_seq; f_gp(n_key,1) - pribnow_start, f_gp(n_key,1) - pribnow_stop];
+    end
+
+    for n_key=1:length(f_gn)
+        //TODO
+        //reverse (eg: seq((:,$:-1:1)) )
+        //remaining_seq = [remaining_seq; ];
+    end
+
+endfunction
+
+function [consensus_score] = get_consensus_score(PPM)
+    [ max_val, _ ] = max(PPM,'r');
+    consensus_score = sum(log(max_val));
+endfunction
 
 function [distribution, proportion_ignored] = Question_1(filtered_strand, ignored_genes, fasta_in, strand_type, verbose)
     // Question 1 : 
