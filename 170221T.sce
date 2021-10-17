@@ -1,4 +1,6 @@
+// Clear Variables and Load helper functions
 clear;
+exec('helpers.sce'); 
 
 function [extended_strand] = extend_strand(strand)
     // For each gene in the protein table array modify its start and end indexes such that
