@@ -165,6 +165,9 @@ exec('helpers.sce');
 
     [gp, gn, ncp, ncn] = get_protein_pos_array('other/NZ_CP046280_1_protein_table.txt');
     fasta_in = 'other/NZ_CP046280_1_genome.fasta';
+
+    [gp,k] = gsort(gp,'lr','i')
+    [gn,k] = gsort(gn,'lr','i')
    
     // Filtering and extending of the sense strand
     [f_gp, i_gp] = ignore_genes(gp);
