@@ -106,6 +106,7 @@ function [PPM] = Question_2(filtered_strand, fasta_in, verbose)
     // of each sequence. 
     // Using the first 1000 sequences, obtain a position probability matrix (PPM) 
     // with 10 positions for the Pribnow box.
+    fs = filtered_strand
     u_row = size(filtered_strand,1);
 
     // Get region with Pribnow Box
@@ -128,7 +129,7 @@ function [PPM] = Question_2(filtered_strand, fasta_in, verbose)
         // m_check = get_fasta_at(fasta_in,gp(n_key,1),gp(n_key,1)+3,1);
             
         // Get position of pribnow Box
-        pribnow_seq = get_fasta_at(fasta_in, gp(n_key,1)-pribnow_start,gp(n_key,1)-pribnow_stop,1); // Potential region to search
+        pribnow_seq = get_fasta_at(fasta_in, fs(n_key,1)-pribnow_start,fs(n_key,1)-pribnow_stop,1); // Potential region to search
 
         [ax,ay,pribnow_pos] = traceback_prom(pribnow_seq,pribnow_query,1,-1,gap_penalty); // Promoter alignment match A or T (W) with A or T (W)
 
