@@ -174,7 +174,85 @@ function [PPM] = Question_2(filtered_strand, fasta_in, verbose)
 
 endfunction
 
-// Load helper functions
+function [col_entropy] = Question_3(PPM)
+    // Question 3
+    // 3.1 : Using a suitable entropy measure, eliminate the redundant positions of the PPM. 
+    // 3.2 : Plot the distribution of the  entropy vs. number  of positions
+    // 3.3 : Select a suitable threshold 
+
+    [w,su]=ppm_info(PPM,[0.25 0.25 0.25 0.25]);
+
+    disp("entropy of PPM");
+    col_entropy = sum(su,1); // Get the entropy for each column
+    disp(col_entropy);
+
+    x = length(col_entropy);
+    x = [1:1:x]';
+    plot(x,col_entropy')
+    xtitle("Distribution of the Entropy vs. Number of Positions");
+    xlabel("Number of Positions");
+    ylabel('Entropy');
+
+endfunction
+
+function [promotor_presence] = update_promotor_presence(remaining_seq, PPM, consensus_score, entropy_thresh)
+    promotor_presence = zeros(5,length(rs)/2)
+
+    for n_key=1:length(remaining_seq)/2
+        seq = get_fasta_at(fasta_in, rs(n_key,1),rs(n_key,2),1); // extract sequence
+    
+        ps_p = stat_align_entropy(seq, PPM, entropy_thresh); // Search for promoter
+    
+        n_ps_p = ps_p - consensus_score*ones(1,length(ps_p))
+    
+        for thresh=-5:-1 //loop through all the thresholds
+    
+            presence = n_ps_p > thresh; // boolean array of presence of promoters
+            if(sum(presence))
+                promotor_presence(abs(thresh),n_key) = 1; // Update the presence of promoters
+            end
+        end
+    end
+
+end
+
+function print_promotor_presence_stat(promotor_presence, text)
+    for i = 1:5
+        proportion = sum(promotor_presence(i,:))/length(promotor_presence(i,:))
+        disp(text + " " + string(-i) + " " + string(proportion));
+    end
+end
+
+function [promotor_presence_initial_PPM, promotor_presence_reduced_PPM ] = Question_4(remaining_seq, PPM, entropy_thresh, verbose)
+    // Question 4
+    // 4.1 : Perform a statistical alignment for the remaining sequences
+    //        - Using the initial PPM of Q2
+    //        - Reduced PPM of Q3
+    //
+    // 4.2 : Compare the two results 
+    //     - for the aligned sequences determine the proportion of genes that *do not* have promoters. 
+    //    For the statistical alignment you may use the thresholds of -1 to -5 (in decrements of 1) 
+    //    after normalizing with the consensus score. 
+    // 4.3 Give result in terms of the proportion of genes used for testing that have detectable promoters.
+    if(~exists("verbose","local")) then
+        verbose = 0;
+    end
+    
+    rs = remaining_seq
+
+    // 4.1
+    consensus_score = get_consensus_score(PPM);
+
+    promotor_presence_initial_PPM = update_promotor_presence(rs, PPM, consensus_score, 0);
+    promotor_presence_reduced_PPM = update_promotor_presence(rs, PPM, consensus_score, entropy_thresh);
+
+    if(verbose) then
+        print_promotor_presence_stat(promotor_presence_initial_PPM, "Initial PPM");
+        print_promotor_presence_stat(promotor_presence_reduced_PPM, "Reduced PPM");
+    end
+
+endfunction
+
 
 exec('helpers.sce'); 
 
