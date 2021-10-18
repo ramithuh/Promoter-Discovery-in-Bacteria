@@ -509,6 +509,9 @@ function bk=get_base_key(base)
         bk=1; // Assign A (A or C or G)
     elseif (base==ascii('N')) then
         bk=2; // Assign C (any base)
+    else
+        bk = 2;
+        disp("!!!! Not found" + string(base));
     end
 endfunction
 
