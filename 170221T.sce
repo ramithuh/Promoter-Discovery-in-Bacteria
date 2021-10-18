@@ -197,6 +197,8 @@ function [col_entropy] = Question_3(PPM)
     col_entropy = sum(su,1); // Get the entropy for each column
     disp(col_entropy);
 
+    clf
+    scf(0);
     x = length(col_entropy);
     x = [1:1:x]';
     plot(x,col_entropy')
@@ -204,6 +206,9 @@ function [col_entropy] = Question_3(PPM)
     xlabel("Number of Positions");
     ylabel('Entropy');
 
+    //PDF export
+    filename = string(count);
+    xs2pdf(0,filename);
 endfunction
 
 function [promotor_presence] = update_promotor_presence(remaining_seq, PPM, consensus_score, entropy_thresh)
