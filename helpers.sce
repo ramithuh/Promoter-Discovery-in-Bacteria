@@ -6,6 +6,78 @@ function g=gap_penalty(k)
     g = -(g_alpha+g_beta*k);
 endfunction
 
+function [pos_scores]=stat_align(seq,ppm)
+    // Do a statistical alignment
+    [m,n]=size(ppm);
+    score_vec = [];
+    seq_len = length(seq);
+    
+    // Do statistical alignment
+    for k=1:(seq_len-n+1)
+        temp_sum = 0;
+        for i=1:n
+            pos_base_key = get_base_key(seq(k+i-1));
+            temp_sum = temp_sum+log(ppm(pos_base_key,i));
+        end
+        score_vec = [score_vec,temp_sum];
+    end
+    pos_scores = score_vec;
+endfunction
+
+function [pos_scores,col_entropy,col_keys]=stat_align_entropy(seq,ppm,entropy_thresh)
+    // Do a statistical alignment using positions with high entropy
+    [m,n]=size(ppm);
+    score_vec = [];
+    seq_len = length(seq);
+    
+    // Find entropy of PPM for equiprobable baseline and get columns above the threshold
+    [w,su]=ppm_info(ppm,[0.25 0.25 0.25 0.25]);
+    col_entropy = sum(su,1); // Get the entropy for each column
+    col_pos = 1:n; // Column numbers
+    col_keys = col_pos(col_entropy>entropy_thresh); // Get keys of columns above the required entropy threshold
+    
+    col_key_count = length(col_keys);
+    col_key_max = max(col_keys); // Ignore all columns of the PPM after the last column with significant entropy
+    
+    // Find entropy of consensus to normalize
+    con_score = 0;
+    for i=1:col_key_count
+        con_score = con_score+log(max(ppm(:,col_keys(i)))); // Sum maximum entropy of each significant column
+    end
+    
+    // Do statistical alignment
+    for k=1:(seq_len-col_key_max+1)
+        temp_sum = 0;
+        for i=1:col_key_count
+            pos_base_key = get_base_key(seq(k+i-1));
+            temp_sum = temp_sum+log(ppm(pos_base_key,col_keys(i)));
+        end
+        score_vec = [score_vec,temp_sum];
+    end
+    pos_scores = score_vec;
+endfunction
+
+function [consensus_score] = get_consensus_score_(PPM, entropy_thresh)
+    [m,n]=size(PPM);
+    score_vec = [];
+    
+    // Find entropy of PPM for equiprobable baseline and get columns above the threshold
+    [w,su] = ppm_info(PPM,[0.25 0.25 0.25 0.25]);
+    col_entropy = sum(su,1); // Get the entropy for each column
+    col_pos = 1:n; // Column numbers
+    col_keys = col_pos(col_entropy > entropy_thresh); // Get keys of columns above the required entropy threshold
+    
+    col_key_count = length(col_keys);
+    col_key_max = max(col_keys); // Ignore all columns of the PPM after the last column with significant entropy
+    
+    // Find entropy of consensus to normalize
+    consensus_score = 0;
+    for i=1:col_key_count
+        consensus_score = consensus_score+log(max(PPM(:,col_keys(i)))); // Sum maximum entropy of each significant column
+    end
+
+endfunction
+
 function result=prom_base(base_x,base_y,score_m,score_mm)
    // Match mismatch score
    // score_m - match score

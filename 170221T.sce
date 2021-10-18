@@ -241,10 +241,11 @@ function [promotor_presence_initial_PPM, promotor_presence_reduced_PPM ] = Quest
     rs = remaining_seq
 
     // 4.1
-    consensus_score = get_consensus_score(PPM);
+    consensus_score   = get_consensus_score(PPM);
+    consensus_score_r = get_consensus_score_(PPM, entropy_thresh)
 
-    promotor_presence_initial_PPM = update_promotor_presence(rs, PPM, consensus_score, 0);
-    promotor_presence_reduced_PPM = update_promotor_presence(rs, PPM, consensus_score, entropy_thresh);
+    promotor_presence_initial_PPM = update_promotor_presence(rs, PPM,   consensus_score, 0);
+    promotor_presence_reduced_PPM = update_promotor_presence(rs, PPM, consensus_score_r, entropy_thresh);
 
     if(verbose) then
         print_promotor_presence_stat(promotor_presence_initial_PPM, "Initial PPM");
