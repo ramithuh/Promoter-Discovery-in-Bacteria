@@ -101,7 +101,12 @@ function [distribution, proportion_ignored] = Question_1(filtered_strand, ignore
 
     //loop through the filtered genes and update the bases array
     for i=1:length(filtered_strand)/2
-        b = get_fasta_at(fasta_in, filtered_strand(i,1), filtered_strand(i,2), strand_type);
+        try
+            b = get_fasta_at(fasta_in, filtered_strand(i,1), filtered_strand(i,2), strand_type);
+        catch
+            disp("Error in get_fasta_at, at position " + string(filtered_strand(i,1)) + ":" + string(filtered_strand(i,2)));
+        end 
+        
         bases = [bases, b];
     end
 
@@ -152,7 +157,11 @@ function [PPM] = Question_2(filtered_strand, fasta_in, verbose)
         // m_check = get_fasta_at(fasta_in,gp(n_key,1),gp(n_key,1)+3,1);
             
         // Get position of pribnow Box
-        pribnow_seq = get_fasta_at(fasta_in, fs(n_key,1)-pribnow_start,fs(n_key,1)-pribnow_stop,1); // Potential region to search
+        try
+            pribnow_seq = get_fasta_at(fasta_in, fs(n_key,1) - pribnow_start, fs(n_key,1) - pribnow_stop, 1); // Potential region to search
+        catch
+            disp("Error in get_fasta_at, at position " + string(fs(n_key,1)) + ":" + string(fs(n_key,2)));
+        end       
 
         [ax,ay,pribnow_pos] = traceback_prom(pribnow_seq,pribnow_query,1,-1,gap_penalty); // Promoter alignment match A or T (W) with A or T (W)
 
