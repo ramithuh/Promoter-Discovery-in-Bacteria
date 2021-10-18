@@ -254,8 +254,13 @@ function [promotor_presence_initial_PPM, promotor_presence_reduced_PPM ] = Quest
 
 endfunction
 
+txt_files   = listfiles(['Genomics Assignment Files/*.txt']);
+fasta_files = listfiles(['Genomics Assignment Files/*.fasta']);
 
-exec('helpers.sce'); 
+//sort names
+txt_files = gsort(txt_files,'lr','i')
+fasta_files = gsort(fasta_files,'lr','i')
+
 
 // 1. Preprocessing
     // extract the gene positions from the protein table
