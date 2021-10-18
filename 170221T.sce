@@ -1,5 +1,5 @@
 // Clear Variables and Load helper functions
-clear;
+clear; 
 exec('helpers.sce'); 
 
 function [extended_strand] = extend_strand(strand)
@@ -127,7 +127,7 @@ function [distribution, proportion_ignored] = Question_1(filtered_strand, ignore
     end 
 endfunction
 
-function [PPM] = Question_2(filtered_strand, fasta_in, verbose)
+function [PPM] = Question_2(filtered_strand, count, fasta_in, verbose)
     // Question 2
     // Perform a W matching local search (for an intact query) to 
     // locate a Pribnow box promoter within upstream positions 5 to 30 
@@ -185,7 +185,7 @@ function [PPM] = Question_2(filtered_strand, fasta_in, verbose)
 
 endfunction
 
-function [col_entropy] = Question_3(PPM)
+function [col_entropy] = Question_3(PPM, count)
     // Question 3
     // 3.1 : Using a suitable entropy measure, eliminate the redundant positions of the PPM. 
     // 3.2 : Plot the distribution of the  entropy vs. number  of positions
