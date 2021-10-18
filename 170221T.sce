@@ -136,6 +136,8 @@ function [PPM] = Question_2(filtered_strand, fasta_in, verbose)
     // with 10 positions for the Pribnow box.
     fs = filtered_strand
     u_row = size(filtered_strand,1);
+    index   = [1:1:1000];
+    r_index = grand(1, "prm", index)
 
     // Get region with Pribnow Box
     pribnow_start = 30;  // Start position offset of pribnow Box (upstream positions upto 30)
@@ -153,8 +155,8 @@ function [PPM] = Question_2(filtered_strand, fasta_in, verbose)
     // Start search    
     cs = 0
 
-    for n_key=1:1000
-        // m_check = get_fasta_at(fasta_in,gp(n_key,1),gp(n_key,1)+3,1);
+    for i=1:min(count, length(fs)/2)
+        n_key = r_index(i)
             
         // Get position of pribnow Box
         try
